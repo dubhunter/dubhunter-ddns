@@ -43,10 +43,19 @@ $app->get('/nic/update', function () use ($app) {
 		'secret' => $app->getDI()->get('config')->aws->secret,
 	));
 
-	error_log(print_r($r53->listResourceRecordSets(array(
+	$status = $r53->changeResourceRecordSets(array(
 		'HostedZoneId' => 'ZGTCRIQVM9TGC',
-		'StartRecordName' => $hostname,
-	)), true));
+		'ChangeBatch' => array(
+			'Changes' => array(
+				'Name' => $hostname,
+				'ResourceRecords' => array(
+					'Value' => $ip,
+				),
+			),
+		),
+	));
+
+	error_log(print_r($status, true));
 
 	$response->setContent('good');
 	return $response;
