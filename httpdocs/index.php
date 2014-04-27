@@ -52,7 +52,9 @@ $app->get('/nic/update', function () use ($app) {
 					'ResourceRecordSet' => array(
 						'Name' => $hostname,
 						'ResourceRecords' => array(
-							'Value' => $ip,
+							array(
+								'Value' => $ip,
+							),
 						),
 					),
 				),
