@@ -44,7 +44,7 @@ $app->get('/nic/update', function () use ($app) {
 	));
 
 	$status = $r53->changeResourceRecordSets(array(
-		'HostedZoneId' => 'ZGTCRIQVM9TGC',
+		'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
 		'ChangeBatch' => array(
 			'Changes' => array(
 				'Action' => 'UPSERT',
