@@ -45,7 +45,7 @@ $app->get('/nic/update', function () use ($app) {
 
 	error_log(print_r($r53->getHostedZone(array(
 		'Id' => 'ZGTCRIQVM9TGC',
-	))));
+	)), true));
 
 	$response->setContent('good');
 	return $response;
