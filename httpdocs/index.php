@@ -43,8 +43,9 @@ $app->get('/nic/update', function () use ($app) {
 		'secret' => $app->getDI()->get('config')->aws->secret,
 	));
 
-	error_log(print_r($r53->getHostedZone(array(
-		'Id' => 'ZGTCRIQVM9TGC',
+	error_log(print_r($r53->listResourceRecordSets(array(
+		'HostedZoneId' => 'ZGTCRIQVM9TGC',
+		'StartRecordName' => $hostname,
 	)), true));
 
 	$response->setContent('good');
