@@ -47,6 +47,7 @@ $app->get('/nic/update', function () use ($app) {
 		'HostedZoneId' => 'ZGTCRIQVM9TGC',
 		'ChangeBatch' => array(
 			'Changes' => array(
+				'Action' => 'UPSERT',
 				'Name' => $hostname,
 				'ResourceRecords' => array(
 					'Value' => $ip,
