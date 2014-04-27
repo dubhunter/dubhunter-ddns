@@ -52,6 +52,7 @@ $app->get('/nic/update', function () use ($app) {
 					'ResourceRecordSet' => array(
 						'Name' => $hostname,
 						'Type' => 'A',
+						'TTL' => 60,
 						'ResourceRecords' => array(
 							array(
 								'Value' => $ip,
