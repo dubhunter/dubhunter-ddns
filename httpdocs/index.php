@@ -43,30 +43,41 @@ $app->get('/nic/update', function () use ($app) {
 		'secret' => $app->getDI()->get('config')->aws->secret,
 	));
 
-	$status = $r53->changeResourceRecordSets(array(
-		'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
-		'ChangeBatch' => array(
-			'Changes' => array(
-				array(
-					'Action' => 'UPSERT',
-					'ResourceRecordSet' => array(
-						'Name' => $hostname,
-						'Type' => 'A',
-						'TTL' => 60,
-						'ResourceRecords' => array(
-							array(
-								'Value' => $ip,
-							),
-						),
-					),
-				),
-			),
-		),
-	));
+	try {
+		$records = $r53->listResourceRecordSets(array(
+			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
+			'Name' => $hostname,
+		));
 
-	error_log(print_r($status, true));
+		error_log(print_r($records, true));
 
-	$response->setContent('good');
+//		$r53->changeResourceRecordSets(array(
+//			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
+//			'ChangeBatch' => array(
+//				'Changes' => array(
+//					array(
+//						'Action' => 'UPSERT',
+//						'ResourceRecordSet' => array(
+//							'Name' => $hostname,
+//							'Type' => 'A',
+//							'TTL' => 60,
+//							'ResourceRecords' => array(
+//								array(
+//									'Value' => $ip,
+//								),
+//							),
+//						),
+//					),
+//				),
+//			),
+//		));
+
+		$response->setContent('good');
+	} catch (Exception $e) {
+		error_log($e->getMessage());
+		$response->setContent('911');
+	}
+
 	return $response;
 });
 
