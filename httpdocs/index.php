@@ -50,6 +50,8 @@ $app->get('/nic/update', function () use ($app) {
 			'MaxItems' => '1',
 		));
 
+		error_log(print_r($records->count(), true));
+		error_log(print_r($records->get(0), true));
 		error_log(print_r($records, true));
 
 //		$r53->changeResourceRecordSets(array(
