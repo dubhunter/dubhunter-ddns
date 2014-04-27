@@ -35,8 +35,6 @@ $app->get('/nic/update', function () use ($app) {
 
 	$hostname = $app->request->getQuery('hostname');
 	$ip = $app->request->getQuery('myip');
-	error_log($hostname);
-	error_log($ip);
 
 	$r53 = Route53Client::factory(array(
 		'key' => $app->getDI()->get('config')->aws->key,
@@ -52,31 +50,34 @@ $app->get('/nic/update', function () use ($app) {
 
 		$recordSets = $recordResponse->get('ResourceRecordSets');
 
-		error_log(print_r(count($recordSets), true));
-		error_log(print_r($recordSets[0]['ResourceRecords'][0], true));
+		if (count($recordSets) == 0) {
+			$response->setContent('nohost');
+		} elseif ($recordSets[0]['ResourceRecords'][0]['Value'] == $ip) {
+			$response->setContent('nochg');
+		} else {
+			$r53->changeResourceRecordSets(array(
+				'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
+				'ChangeBatch' => array(
+					'Changes' => array(
+						array(
+							'Action' => 'UPSERT',
+							'ResourceRecordSet' => array(
+								'Name' => $hostname,
+								'Type' => 'A',
+								'TTL' => 60,
+								'ResourceRecords' => array(
+									array(
+										'Value' => $ip,
+									),
+								),
+							),
+						),
+					),
+				),
+			));
 
-//		$r53->changeResourceRecordSets(array(
-//			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
-//			'ChangeBatch' => array(
-//				'Changes' => array(
-//					array(
-//						'Action' => 'UPSERT',
-//						'ResourceRecordSet' => array(
-//							'Name' => $hostname,
-//							'Type' => 'A',
-//							'TTL' => 60,
-//							'ResourceRecords' => array(
-//								array(
-//									'Value' => $ip,
-//								),
-//							),
-//						),
-//					),
-//				),
-//			),
-//		));
-
-		$response->setContent('good');
+			$response->setContent('good');
+		}
 	} catch (Exception $e) {
 		error_log($e->getMessage());
 		$response->setContent('911');
