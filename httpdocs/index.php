@@ -44,15 +44,16 @@ $app->get('/nic/update', function () use ($app) {
 	));
 
 	try {
-		$records = $r53->listResourceRecordSets(array(
+		$recordResponse = $r53->listResourceRecordSets(array(
 			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
 			'StartRecordName' => $hostname,
 			'MaxItems' => '1',
 		));
 
-		error_log(print_r($records->count(), true));
-		error_log(print_r($records->get(0), true));
-		error_log(print_r($records, true));
+		$recordSets = $recordResponse->get('ResourceRecordSets');
+
+		error_log(print_r(count($recordSets), true));
+		error_log(print_r($recordSets[0]['ResourceRecords'][0], true));
 
 //		$r53->changeResourceRecordSets(array(
 //			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
