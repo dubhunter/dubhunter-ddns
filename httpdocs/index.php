@@ -51,6 +51,7 @@ $app->get('/nic/update', function () use ($app) {
 					'Action' => 'UPSERT',
 					'ResourceRecordSet' => array(
 						'Name' => $hostname,
+						'Type' => 'A',
 						'ResourceRecords' => array(
 							array(
 								'Value' => $ip,
