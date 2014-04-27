@@ -46,7 +46,7 @@ $app->get('/nic/update', function () use ($app) {
 	try {
 		$records = $r53->listResourceRecordSets(array(
 			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
-			'StartRecordIdentifier' => $hostname,
+			'StartRecordName' => $hostname,
 			'MaxItems' => '1',
 		));
 
