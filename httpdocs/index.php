@@ -48,9 +48,11 @@ $app->get('/nic/update', function () use ($app) {
 		'ChangeBatch' => array(
 			'Changes' => array(
 				'Action' => 'UPSERT',
-				'Name' => $hostname,
-				'ResourceRecords' => array(
-					'Value' => $ip,
+				'ResourceRecordSet' => array(
+					'Name' => $hostname,
+					'ResourceRecords' => array(
+						'Value' => $ip,
+					),
 				),
 			),
 		),
