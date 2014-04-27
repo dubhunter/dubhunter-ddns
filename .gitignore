@@ -1,5 +1,6 @@
-.idea
-logs/
 .DS_Store
+.idea
+.htaccess
+logs/
 composer.lock
 vendor/
