@@ -47,11 +47,13 @@ $app->get('/nic/update', function () use ($app) {
 		'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
 		'ChangeBatch' => array(
 			'Changes' => array(
-				'Action' => 'UPSERT',
-				'ResourceRecordSet' => array(
-					'Name' => $hostname,
-					'ResourceRecords' => array(
-						'Value' => $ip,
+				array(
+					'Action' => 'UPSERT',
+					'ResourceRecordSet' => array(
+						'Name' => $hostname,
+						'ResourceRecords' => array(
+							'Value' => $ip,
+						),
 					),
 				),
 			),
