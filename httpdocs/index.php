@@ -12,6 +12,10 @@ $di->set('config', function() {
 
 $app = new Micro($di);
 
+$app->notFound(function () use ($app) {
+    $app->response->setStatusCode(404, 'Not Found')->sendHeaders();
+});
+
 $app->get('/', function() use ($app) {
     $ip = $app->request->getServer('REMOTE_ADDR');
     $app->response->setContent($ip);
