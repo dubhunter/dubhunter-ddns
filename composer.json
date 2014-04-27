@@ -1,0 +1,15 @@
+{
+	"name": "dubhunter/dubhunter-ddns",
+	"description": "A Dynamic DNS providerf or updating Route 53 zones.",
+	"minimum-stability": "stable",
+	"license": "proprietary",
+	"authors": [
+		{
+			"name": "Will Mason",
+			"email": "get@dubhunter.com"
+		}
+	],
+	"require": {
+		"aws/aws-sdk-php": "2.*"
+	}
+}

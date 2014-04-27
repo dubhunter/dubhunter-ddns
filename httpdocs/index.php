@@ -2,12 +2,13 @@
 
 use Phalcon\DI\FactoryDefault,
 	Phalcon\Mvc\Micro,
-	Phalcon\Http\Response;
+	Phalcon\Http\Response,
+	Aws\Route53\Route53Client;
 
 $di = new FactoryDefault();
 
 $di->set('config', function () {
-	$config = new \Phalcon\Config\Adapter\Ini('/../app/config/config.ini');
+	$config = new \Phalcon\Config\Adapter\Ini('../app/config/config.ini');
 	return $config;
 });
 
@@ -34,6 +35,13 @@ $app->get('/nic/update', function () use ($app) {
 	$ip = $app->request->getQuery('myip');
 	error_log($hostname);
 	error_log($ip);
+
+	$r53 = Route53Client::factory(array(
+		'key' => $app->getDI()->get('config')->aws->key,
+		'secret' => $app->getDI()->get('config')->aws->secret,
+	));
+
+	error_log(print_r($r53->listHostedZones()));
 
 	$response->setContent('good');
 	return $response;
