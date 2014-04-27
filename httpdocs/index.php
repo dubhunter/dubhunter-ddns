@@ -1,7 +1,8 @@
 <?php
 
-use \Phalcon\Mvc\Micro,
-    \Phalcon\DI\FactoryDefault;
+use Phalcon\DI\FactoryDefault,
+    Phalcon\Mvc\Micro,
+    Phalcon\Http\Response;
 
 $di = new FactoryDefault();
 
@@ -12,13 +13,17 @@ $di->set('config', function() {
 
 $app = new Micro($di);
 
-$app->notFound(function () use ($app) {
-    $app->response->setStatusCode(404, 'Not Found')->sendHeaders();
+$app->notFound(function () {
+    $response = new Response();
+    $response->setStatusCode(404, 'Not Found')->sendHeaders();
+    return $response;
 });
 
 $app->get('/', function() use ($app) {
     $ip = $app->request->getServer('REMOTE_ADDR');
-    $app->response->setContent($ip);
+    $response = new Response();
+    $response->setContentType('text/plain')->setContent($ip);
+    return $response;
 });
 
 $app->get('/nic/update', function() use ($app) {
