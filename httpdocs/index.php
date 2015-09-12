@@ -23,7 +23,7 @@ $app->notFound(function () {
 });
 
 $app->get('/', function () use ($app) {
-	$ip = $app->request->getServer('REMOTE_ADDR');
+	$ip = $app->request->hasServer('X_FORWARDED_FOR') ? $app->request->getServer('X_FORWARDED_FOR') : $app->request->getServer('REMOTE_ADDR');
 	$response = new Response();
 	$response->setContentType('text/plain')->setContent($ip);
 	return $response;
