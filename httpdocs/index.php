@@ -29,6 +29,12 @@ $app->get('/', function () use ($app) {
 	return $response;
 });
 
+$app->get('/server', function () use ($app) {
+	$response = new Response();
+	$response->setContentType('text/plain')->setContent(print_r($_SERVER, true));
+	return $response;
+});
+
 $app->get('/nic/update', function () use ($app) {
 	$response = new Response();
 	$response->setContentType('text/plain');
