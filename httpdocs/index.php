@@ -48,41 +48,52 @@ $app->get('/nic/update', function () use ($app) {
 	));
 
 	try {
-		$recordResponse = $r53->listResourceRecordSets(array(
-			'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
-			'StartRecordName' => $hostname,
+		$zonesResponse = $r53->listHostedZonesByName(array(
+			'DNSName' => substr($hostname, strpos($hostname, '.') + 1),
 			'MaxItems' => '1',
 		));
 
-		$recordSets = $recordResponse->get('ResourceRecordSets');
+		$zones = $zonesResponse->get('HostedZones');
 
-		if (count($recordSets) == 0) {
+		if (count($zones) == 0 || strpos($hostname, trim($zones[0]['Name'], '.')) === false) {
 			$response->setContent('nohost');
-		} elseif ($recordSets[0]['ResourceRecords'][0]['Value'] == $ip) {
-			$response->setContent('nochg');
 		} else {
-			$r53->changeResourceRecordSets(array(
-				'HostedZoneId' => $app->getDI()->get('config')->aws->zone,
-				'ChangeBatch' => array(
-					'Changes' => array(
-						array(
-							'Action' => 'UPSERT',
-							'ResourceRecordSet' => array(
-								'Name' => $hostname,
-								'Type' => 'A',
-								'TTL' => 60,
-								'ResourceRecords' => array(
-									array(
-										'Value' => $ip,
+			$recordResponse = $r53->listResourceRecordSets(array(
+				'HostedZoneId' => $zones[0]['Id'],
+				'StartRecordName' => $hostname,
+				'MaxItems' => '1',
+			));
+
+			$recordSets = $recordResponse->get('ResourceRecordSets');
+
+			if (count($recordSets) == 0) {
+				$response->setContent('nohost');
+			} elseif ($recordSets[0]['ResourceRecords'][0]['Value'] == $ip) {
+				$response->setContent('nochg');
+			} else {
+				$r53->changeResourceRecordSets(array(
+					'HostedZoneId' => $zones[0]['Id'],
+					'ChangeBatch' => array(
+						'Changes' => array(
+							array(
+								'Action' => 'UPSERT',
+								'ResourceRecordSet' => array(
+									'Name' => $hostname,
+									'Type' => 'A',
+									'TTL' => 60,
+									'ResourceRecords' => array(
+										array(
+											'Value' => $ip,
+										),
 									),
 								),
 							),
 						),
 					),
-				),
-			));
+				));
 
-			$response->setContent('good');
+				$response->setContent('good');
+			}
 		}
 	} catch (Exception $e) {
 		error_log($e->getMessage());
